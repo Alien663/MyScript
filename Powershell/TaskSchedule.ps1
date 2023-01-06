@@ -1,6 +1,7 @@
 # disable Job
 # -------------------------------------------------------------------------------
 $log_file = "D:\JobScheduler\"
+$the_domain = "domain"
 $the_user = "account"
 if(!(Test-Path -Path $log_file)){ # create the log_file folder
     New-Item -ItemType Directory -Path $log_file
@@ -8,7 +9,7 @@ if(!(Test-Path -Path $log_file)){ # create the log_file folder
 # if the state of job is disable, don't write to log.txt
 $data = get-scheduledtask | select-object TaskPath,Taskname,Author,State,Principal | where {$_.State -ne "Disabled"}
 foreach($sch in $data){
-    if($the_user -eq $sch.Principal.UserId -or $the_user -eq ("domain\" + $the_user)){ 
+    if($sch.Principal.UserId -eq $the_user -or $sch.Principal.UserId -eq ( $the_domain + "\" + $the_user)){ 
         echo $sch >> $log_file"disable_task.txt"
         echo ($sch.TaskPath + $sch.TaskName) >> $log_file"log.txt"
         # Disable-ScheduledTask -TaskName ($sch.TaskPath + $sch.TaskName)
