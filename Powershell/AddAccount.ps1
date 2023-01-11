@@ -29,5 +29,5 @@ Add-LocalGroupMember -Group "Administrators" -Member $Account
 $account = "account"
 $_password = "password"
 $password = ConvertTo-SecureString $_password -AsPlainText -Force
-$Cred = New-Object System.Management.Automation.PSCredential ("the local admin", $password)
+$Cred = New-Object System.Management.Automation.PSCredential ($account, $password)
 # -------------------------------------------------------------------------------
