@@ -28,3 +28,51 @@ foreach($server in $servers){
     start-vm -VM $newVM
 }
 # -------------------------------------------------------------------------------
+
+
+
+# -------------------------------------------------------------------------------
+# create new virtual switch first
+# replace TestVS to your new virtual switch name
+# check vlanid is correct
+# check vmlist is correct
+$vmlist = @("UBT", "TestVM1")
+$newvs = Get-VMSwitch -Name TestVS
+$vlanid =  477
+
+foreach($vmname in $vmlist){
+    $vm = Get-VM -Name $vmname
+    Connect-VMNetworkAdapter -VMNetworkAdapter $vm.NetworkAdapters -VMSwitch $newvs
+    Set-VMNetworkAdapterVlan -VMName $vm.Name -Access -VlanId $vlanid
+}
+# -------------------------------------------------------------------------------
+
+
+
+# -------------------------------------------------------------------------------
+$newvs = Get-VMSwitch -Name VirtualSwitchOnTrunkPort
+function Get-VlanIDWithRule($ip){
+    $ipRule = @(
+        [pscustomobject]@{ipRex="*.*.28.*";VlanID=447},
+        [pscustomobject]@{ipRex="*.*.29.*";VlanID=447}
+    )
+    foreach($rule in $ipRule){
+        if($ip -like $rule.ipRex){
+            return $rule.VlanID
+        }
+        else{
+            return 0
+        }
+    }
+} 
+
+$vms = (Get-VM | where State -eq "Running")
+
+foreach($vm in $vms){
+    $myvlanid = Get-VlanIDWithRule($vm.NetworkAdapters.IPAddresses)
+    if($myvlanid -gt 0){
+        Connect-VMNetworkAdapter -VMNetworkAdapter $vm.NetworkAdapters -VMSwitch $newvs
+        Set-VMNetworkAdapterVlan -VMName $vm.Name -Access -VlanId $myvlanid
+    }
+}
+# -------------------------------------------------------------------------------

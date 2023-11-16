@@ -73,3 +73,15 @@ if ($OK) {
 if ($Reboot) {
   Write-Host "您必須重新開機，才能讓設定生效！"
 }
+
+
+#--------------------------------------------------------------------------------
+$old_ip = "169.254.10.10"
+$new_ip = "169.254.20.10"
+$new_gw = "169.254.20.254"
+$id = (Get-NetIPAddress | where IPAddress -like "169.254.*").InterfaceIndex
+$old_gw = (Get-NetRoute -interfaceindex $id -DestinationPrefix '0.0.0.0/0')[0].NextHop
+New-NetIPAddress -InterfaceIndex $id -IPAddress $new_ip -PrefixLength 16 -DefaultGateway $new_gw
+Remove-NetIPAddress -IPAddress $old_ip -confirm:$false
+Remove-NetRoute -interfaceindex 8 -NextHop $old_gw -confirm:$false
+#--------------------------------------------------------------------------------

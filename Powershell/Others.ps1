@@ -18,3 +18,6 @@ $array1.Add("D")
 $array2 = [System.Collections.ArrayList]@("A", "B", "C")
 $array2.GetType()
 $array2.Add("D")
+
+
+$today = get-date -format "yyyyMMdd"

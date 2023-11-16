@@ -2,23 +2,22 @@
 # -------------------------------------------------------------------------------
 $names = @("computer name 1", "computer name 2", "computer name 3")
 $servers = @()
-foreach( $name in $names){
+foreach($name in $names){
     $servers += [System.Net.Dns]::GetHostByName($name).HostName
 }
 
 $servers
 # 1. It needs to certificate user by AD
-foreach( $server in $servers){
+foreach($server in $servers){
     InVoke-Command -ComputerName $server -ScriptBlock{
-        $myname = hostname
+        $me = hostname
         echo "---------------------------------------------------------------------------------"
-        echo "$myname start to run command"
+        echo "$me start to run command"
 
 
         # you can wirte your script here
 
 
-        echo "$myname done"
         echo "---------------------------------------------------------------------------------"
     }
 }
