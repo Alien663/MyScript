@@ -1,6 +1,6 @@
 # select data
 $physicalPath = (Get-Website | Select-Object).PhysicalPath
-
+Get-Website | ConvertTo-Json | ConvertFrom-Json | Select-Object -Property Name, PhysicalPath
 
 # true / false judge
 "abcdefg", "defghi" -match "abc"

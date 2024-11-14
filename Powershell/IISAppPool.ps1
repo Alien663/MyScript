@@ -33,6 +33,5 @@ foreach($app in (Get-WebApplication).path){
     if($app_creddential -eq $olduser){
         Set-WebConfiguration -Filter "/system.applicationHost/sites/site/application[@path='$app']/virtualDirectory" -Value @{userName=$newuser; password=$password}
     }
-
 }
 # -------------------------------------------------------------------------------

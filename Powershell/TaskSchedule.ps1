@@ -1,36 +1,41 @@
+# Update Items:
+# 1. Change file format to json, it makes people and program easier to read
+# 2. Add TaskPath to make it more presicesily to find the job
+# 3. Add State to check previoud state
 # disable Job
 # -------------------------------------------------------------------------------
 $log_file = "D:\JobScheduler\"
-$the_domain = "domain"
-$the_user = "account"
+$accounts = @("admin1")
 if(!(Test-Path -Path $log_file)){ # create the log_file folder
     New-Item -ItemType Directory -Path $log_file
 }
-# if the state of job is disable, don't write to log.txt
-$data = get-scheduledtask | select-object TaskPath,Taskname,Author,State,Principal | where {$_.State -ne "Disabled"}
-foreach($sch in $data){
-    if($sch.Principal.UserId -eq $the_user -or $sch.Principal.UserId -eq ( $the_domain + "\" + $the_user)){ 
-        echo $sch >> $log_file"disable_task.txt"
-        echo ($sch.TaskPath + $sch.TaskName) >> $log_file"log.txt"
-        # Disable-ScheduledTask -TaskName ($sch.TaskPath + $sch.TaskName)
-    }
-}
+$jobs = Get-ScheduledTask | where-object { $accounts -contains $_.Principal.UserId }
+$jobs | select TaskPath,TaskName,State,@{N='RunAs';E={$_.Principal.UserId}} | ConvertTo-Json > $log_file"JobList.txt"
+#$jobs | Disable-ScheduledTask
 # -------------------------------------------------------------------------------
 
-
-# modify password
+# create credential: How many accounts you need to change
 # -------------------------------------------------------------------------------
-$TaskCredential = Get-Credential
-Get-ScheduledTask | Where-Object { $_.Principal.UserId -eq $TaskCredential.UserName } | Set-ScheduledTask -User $TaskCredential.UserName -Password $TaskCredential.GetNetworkCredential().Password
+$account1 = "domain\admin1"
+$_password1 = 'password'
+$password1 = ConvertTo-SecureString $_password1 -AsPlainText -Force
+$admin1Credential = New-Object System.Management.Automation.PSCredential ($account1, $password1)
 # -------------------------------------------------------------------------------
 
-
-# Enable Job
+# Update credential and enable job
 # -------------------------------------------------------------------------------
 $log_file = "D:\JobScheduler\"
-$enable_list = Get-Content $log_file"log.txt"
-foreach($sch in $enable_list){
-    echo $sch
-    #Enable-ScheduledTask -TaskName $sch
+$joblist = Get-Content $log_file"JobList.txt" | ConvertFrom-Json
+foreach($job in $joblist){
+    $thisJob = Get-ScheduledTask -TaskPath $job.TaskPath -TaskName $job.TaskName
+    # if there are many accounts, you can add more if statement here
+    if($thisJob.Principal.UserId -eq "admin1"){
+        $thisJob | Set-ScheduledTask -User $admin1Credential.UserName -Password $admin1Credential.GetNetworkCredential().Password
+    }
+
+    # when job's previous state is not "Disalbed"
+    if($job.State -ne 3){
+        #$thisJob | Enable-ScheduledTask
+    }
 }
 # -------------------------------------------------------------------------------

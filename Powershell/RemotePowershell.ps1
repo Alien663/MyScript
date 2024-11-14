@@ -6,18 +6,15 @@ foreach($name in $names){
     $servers += [System.Net.Dns]::GetHostByName($name).HostName
 }
 
-$servers
 # 1. It needs to certificate user by AD
 foreach($server in $servers){
     InVoke-Command -ComputerName $server -ScriptBlock{
         $me = hostname
         echo "---------------------------------------------------------------------------------"
         echo "$me start to run command"
-
-
         # you can wirte your script here
 
-
+        # you can wirte your script here
         echo "---------------------------------------------------------------------------------"
     }
 }

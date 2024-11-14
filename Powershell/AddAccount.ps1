@@ -30,4 +30,7 @@ $account = "account"
 $_password = "password"
 $password = ConvertTo-SecureString $_password -AsPlainText -Force
 $Cred = New-Object System.Management.Automation.PSCredential ($account, $password)
+
+$Password = ConvertTo-SecureString "2024Q4@GLof0t101" -AsPlainText -Force
+Get-LocalUser -Name "localking" | Set-LocalUser -Password $Password
 # -------------------------------------------------------------------------------
