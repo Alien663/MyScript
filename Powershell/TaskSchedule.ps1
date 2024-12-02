@@ -10,7 +10,7 @@ if(!(Test-Path -Path $log_file)){ # create the log_file folder
     New-Item -ItemType Directory -Path $log_file
 }
 $jobs = Get-ScheduledTask | where-object { $accounts -contains $_.Principal.UserId }
-$jobs | select TaskPath,TaskName,State,@{N='RunAs';E={$_.Principal.UserId}} | ConvertTo-Json > $log_file"JobList.txt"
+$jobs | select TaskPath,TaskName,State,@{N='RunAs';E={$_.Principal.UserId}} | ConvertTo-Json > $log_file"JobList.json"
 #$jobs | Disable-ScheduledTask
 # -------------------------------------------------------------------------------
 
@@ -25,7 +25,7 @@ $admin1Credential = New-Object System.Management.Automation.PSCredential ($accou
 # Update credential and enable job
 # -------------------------------------------------------------------------------
 $log_file = "D:\JobScheduler\"
-$joblist = Get-Content $log_file"JobList.txt" | ConvertFrom-Json
+$joblist = Get-Content $log_file"JobList.json" | ConvertFrom-Json
 foreach($job in $joblist){
     $thisJob = Get-ScheduledTask -TaskPath $job.TaskPath -TaskName $job.TaskName
     # if there are many accounts, you can add more if statement here
@@ -34,7 +34,7 @@ foreach($job in $joblist){
     }
 
     # when job's previous state is not "Disalbed"
-    if($job.State -ne 3){
+    if($job.State -ne 1){
         #$thisJob | Enable-ScheduledTask
     }
 }
