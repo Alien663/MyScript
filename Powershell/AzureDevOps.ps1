@@ -17,12 +17,12 @@ $body = @"
     }]
 }
 "@ 
-$url2 = "$basedURL/git/repositories/NugetPackageTest/pullrequestquery?api-version=6.0"
+$url2 = "$basedURL/git/repositories/$(Build.Repository.Name)/pullrequestquery?api-version=6.0"
 $response = Invoke-RestMethod -Uri $url2 -Method Post -Headers $AzureDevOpsAuthenicationHeader -Body $body -ContentType "application/json"
 
 $prid = $response.results."$mergeCommit".pullRequestId
 
-$url3 = "$basedURL/git/repositories/NugetPackageTest/pullRequests/$prid/labels"
+$url3 = "$basedURL/git/repositories/$(Build.Repository.Name)/pullRequests/$prid/labels"
 $response = Invoke-RestMethod -Uri $url3 -Method Get -Headers $AzureDevOpsAuthenicationHeader
 foreach($tag in $response.value.name){
     Write-Host "##vso[build.addbuildtag]$($tag)"
