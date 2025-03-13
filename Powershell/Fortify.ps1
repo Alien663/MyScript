@@ -21,7 +21,7 @@ if($queryCriticalData.Count -gt 0){
 
 # Hight Issue
 # -------------------------------------------------------------------------------
-$$queryHighData = (FPRUtility -project "$PATH.fpr" -information -search -filterSet "Security Auditor View" -listIssues -categoryIssueCounts -outputFormat CSV  -query "[fortify priority order]:High")
+$queryHighData = (FPRUtility -project "$PATH.fpr" -information -search -filterSet "Security Auditor View" -listIssues -categoryIssueCounts -outputFormat CSV  -query "[fortify priority order]:High")
 if($queryHighData.Count -gt 0){
     $hightCSVData = $queryHighData | ConvertFrom-CSV
     $resultString += "<hr><h2 style='background-color:rgb(255,128,0);'>Critical</h2><h4>" + $hightCSVData[-1].IID + "</h4>"

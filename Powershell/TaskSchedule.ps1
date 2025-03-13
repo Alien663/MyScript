@@ -39,3 +39,23 @@ foreach($job in $joblist){
     }
 }
 # -------------------------------------------------------------------------------
+
+
+
+
+
+# -------------------------------------------------------------------------------
+# Get Job Last Run Result
+$jobs = Get-ScheduledTask | where-object { $_.TaskPath -notlike "\Microsoft*" -and $_.State -ne "Disabled"} | Get-ScheduledTaskInfo
+$jobdata = @()
+
+foreach($job in $jobs){
+    $jobdata += New-Object PSObject -Property @{
+        "Name" = $job.TaskName
+        "LastRunTime" = $job.LastRunTime
+        "NextRunTime" = $job.NextRunTime
+        "LastResult" = "0x" + $job.LastTaskResult.ToString('x')
+        "State" = $job.State
+    }
+}
+# -------------------------------------------------------------------------------

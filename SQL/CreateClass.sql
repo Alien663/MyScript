@@ -9,7 +9,7 @@ create table Class
 (
     CID int identity(1, 1),
     [Name] nvarchar(64),
-    [Description] nvarchar(51211),
+    [Description] nvarchar(512),
     IDPath varchar(128),
     NamePath varchar(512),
     nLevel int,
