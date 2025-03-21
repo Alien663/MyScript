@@ -21,3 +21,18 @@ $array2.Add("D")
 
 
 $today = get-date -format "yyyyMMdd"
+
+# --------------------------------------------------------------------------------
+function Get-isProcessRunning(){
+    $processes = "$(ProcesseNames)".split(",")
+    foreach($process in $processes){
+        if(Get-Process -Name $process -ErrorAction SilentlyContinue){
+            return $true
+        }
+    }
+    return $false
+}
+while(Get-isProcessRunning){
+    Start-Sleep -Seconds $(SleepTime)
+}
+# --------------------------------------------------------------------------------
